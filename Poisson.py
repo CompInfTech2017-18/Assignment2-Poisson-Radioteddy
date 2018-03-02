@@ -8,6 +8,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
+#import os
+
+#dir_path = os.path.abspath('Poisson.py')
+#print(dir_path)
 
 class solution:
     def __init__(self, Ox, Oy, eps, cut): #cut is fourier clipping
@@ -35,16 +39,16 @@ class solution:
     def Jacobi(self):
         self.U = self.init
         self.U[:, 0] = 100
+        self.U[self.X-1, 1:] = 0
+        self.U[0, 1:] = 0
+        self.U[:, self.Y-1] = 0       
         for i in range(5000):
             self.init = self.U
             self.U[1:self.X-1, 1:self.Y-1] = (self.init[0:-2, 1:-1]+self.init[2:, 1:-1]+self.init[1:-1, 2:]+self.init[1:-1, 0:-2])/4
-            #self.U[0, :] = 100
-            self.U[self.X-1, :] = 0
-            self.U[0, :] = 0
-            self.U[:, self.Y-1] = 0
+            #np.savetxt('/home/radioteddy/scripts/poisson/distribution/potential_'+str(i)+'.dat', self.U, fmt='%.5f') #intermediate distribution
         return self.U
     
-    def plotter(self, U):
+    def plotter(self, U, method):
         x = np.linspace(0, self.X, self.X)
         y = np.linspace(0, self.Y, self.Y)
         self.xgrid, self.ygrid = np.meshgrid(x, y)
@@ -56,13 +60,14 @@ class solution:
         ax.zaxis.set_major_locator(LinearLocator(6))
         ax.zaxis.set_major_formatter(FormatStrFormatter('%.1f'))
         fig.colorbar(face, shrink=0.5, aspect=10)
+        ax.set_title(method)
         plt.show()
         
     def run(self, method):
         if method == 'Jacobi':
-            self.plotter(self.Jacobi())
+            self.plotter(self.Jacobi(), 'Jacobi')
         elif method == 'Fourier':
-            self.plotter(self.Fourier())
+            self.plotter(self.Fourier(), 'Fourier')
     
 test = solution(100, 100, 0.001, 100)
 test.run('Fourier')
