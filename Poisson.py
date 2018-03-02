@@ -45,9 +45,23 @@ class solution:
         for i in range(5000):
             self.init = self.U
             self.U[1:self.X-1, 1:self.Y-1] = (self.init[0:-2, 1:-1]+self.init[2:, 1:-1]+self.init[1:-1, 2:]+self.init[1:-1, 0:-2])/4
-            #np.savetxt('/home/radioteddy/scripts/poisson/distribution/potential_'+str(i)+'.dat', self.U, fmt='%.5f') #intermediate distribution
+            #np.savetxt('/home/radioteddy/scripts/poisson/distribution/potential_'+str(i+1)+'.dat', self.U, fmt='%.5f') #intermediate distribution
         return self.U
     
+    def Gauss_Seidel(self):
+        U_init = 0
+        U_final = 1
+        self.U = self.init
+        self.U[:, 0] = 100
+        self.U[self.X-1, 1:] = 0
+        self.U[0, 1:] = 0
+        self.U[:, self.Y-1] = 0
+        while (np.abs(U_init - U_final) > self.err):
+            U_init = np.abs(np.trace(self.U))
+            self.U[1:self.X-1, 1:self.Y-1] = (self.U[0:-2, 1:-1]+self.U[2:, 1:-1]+self.U[1:-1, 2:]+self.U[1:-1, 0:-2])/4 
+            U_final = np.abs(np.trace(self.U))
+        return self.U
+            
     def plotter(self, U, method):
         x = np.linspace(0, self.X, self.X)
         y = np.linspace(0, self.Y, self.Y)
@@ -68,10 +82,13 @@ class solution:
             self.plotter(self.Jacobi(), 'Jacobi')
         elif method == 'Fourier':
             self.plotter(self.Fourier(), 'Fourier')
+        elif method == 'Gauss-Seidel':
+            self.plotter(self.Gauss_Seidel(), 'Gauss-Seidel')
     
 test = solution(100, 100, 0.001, 100)
 test.run('Fourier')
 test.run('Jacobi')
+test.run('Gauss-Seidel')
 
         
         
