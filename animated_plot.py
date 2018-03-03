@@ -13,7 +13,7 @@ import matplotlib.animation as animation
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 #starting distribution of potential for right colorbar mapping
-U = np.loadtxt('/home/radioteddy/scripts/poisson/distribution/potential_'+str(1000)+'.dat')
+U = np.loadtxt('/home/radioteddy/scripts/poisson/distribution/potential_'+str(100)+'.dat')
 
 x = np.linspace(0, 100, 100)
 y = np.linspace(0, 100, 100)
@@ -36,6 +36,6 @@ def data_gen(frame, U, plot):
     plot = ax.plot_surface(xgrid, ygrid, U, cmap=cm.plasma, linewidth=0, antialiased=False)
     return plot,
 
-face_ani = animation.FuncAnimation(fig, data_gen, frames=range(1000), fargs=(U, face), interval=1, blit=False, repeat=False)
+face_ani = animation.FuncAnimation(fig, data_gen, frames=range(100), fargs=(U, face), interval=1, blit=False, repeat=False)
 
 plt.show()
