@@ -42,10 +42,10 @@ class solution:
         self.U[self.X-1, 1:] = 0
         self.U[0, 1:] = 0
         self.U[:, self.Y-1] = 0       
-        for i in range(5000):
+        for i in range(1000):
             self.init = self.U
             self.U[1:self.X-1, 1:self.Y-1] = (self.init[0:-2, 1:-1]+self.init[2:, 1:-1]+self.init[1:-1, 2:]+self.init[1:-1, 0:-2])/4
-            #np.savetxt('/home/radioteddy/scripts/poisson/distribution/potential_'+str(i+1)+'.dat', self.U, fmt='%.5f') #intermediate distribution
+            np.savetxt('/home/radioteddy/scripts/poisson/distribution/potential_'+str(i+1)+'.dat', self.U, fmt='%.5f') #intermediate distribution
         return self.U
     
     def Gauss_Seidel(self):
@@ -86,9 +86,9 @@ class solution:
             self.plotter(self.Gauss_Seidel(), 'Gauss-Seidel')
     
 test = solution(100, 100, 0.001, 100)
-test.run('Fourier')
+#test.run('Fourier')
 test.run('Jacobi')
-test.run('Gauss-Seidel')
+#test.run('Gauss-Seidel')
 
         
         
