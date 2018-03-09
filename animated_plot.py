@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import matplotlib.animation as animation
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from mpl_toolkits.mplot3d import Axes3D
 
 #starting distribution of potential for right colorbar mapping
 U = np.loadtxt('/home/radioteddy/scripts/poisson/distribution/potential_'+str(100)+'.dat')

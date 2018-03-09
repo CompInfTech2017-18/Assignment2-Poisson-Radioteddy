@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from mpl_toolkits.mplot3d import Axes3D
-import pylab
+from matplotlib import lines as line
+from matplotlib.lines import Line2D
 #import os
 
 #dir_path = os.path.abspath('Poisson.py')
@@ -86,7 +87,7 @@ class solution:
     
     def Capacitor(self):
 #        self.U = np.zeros((self.X, self.Y))
-        self.U = np.loadtxt('capaictor.dat')
+        self.U = np.loadtxt('capacitor.dat')
         X = self.U.shape[0]
         Y = self.U.shape[1]
         U_buf = np.zeros((X, Y))
@@ -95,15 +96,39 @@ class solution:
         y = np.nonzero(U_buf)[1]
         x = np.unique(x)
         y = np.unique(y)
-        U_init = 0
-        U_final = 1
-        for i in range(1000):
+#        U_init = 0
+#        U_final = 1
+        for i in range(10000):
 #        while (np.abs(U_init - U_final) > self.err):
-            U_init = np.abs(np.trace(self.U))
+#            U_init = np.abs(np.trace(self.U))
             self.U[1:X-1, 1:Y-1] = (self.U[0:-2, 1:-1]+self.U[2:, 1:-1]+self.U[1:-1, 2:]+self.U[1:-1, 0:-2])/4
             self.U[x[0], y[0]:y[len(y)-1]] = 100
             self.U[x[1], y[0]:y[len(y)-1]] = -100
-            U_final = np.abs(np.trace(self.U))
+#create lines of electric field
+        x1 = np.full(len(y), x[0])
+        x2 = np.full(len(y), x[1])
+        xx = np.linspace(0, X, X)
+        yy = np.linspace(0, Y, Y)
+        xx, yy = np.meshgrid(xx, yy)
+        self.E_x = (self.U[1:-1, 2:]-self.U[1:-1, 0:-2])/2
+        self.E_y = (self.U[2:, 1:-1]-self.U[0:-2, 1:-1])/2
+        self.E_x = np.insert(self.E_x, 0, 0, axis=0)
+        self.E_x = np.insert(self.E_x, X - 1, 0, axis=0)
+        self.E_x = np.insert(self.E_x, 0, 0, axis=1)
+        self.E_x = np.insert(self.E_x, Y - 1, 0, axis=1)
+        self.E_y = np.insert(self.E_y, 0, 0, axis=0)
+        self.E_y = np.insert(self.E_y, X - 1, 0, axis=0)
+        self.E_y = np.insert(self.E_y, 0, 0, axis=1)
+        self.E_y = np.insert(self.E_y, Y - 1, 0, axis=1)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.streamplot(xx, yy, self.E_x, self.E_y, linewidth=1)
+        plt.contour(xx, yy, self.U, cmap=cm.plasma, linewidth=1)
+        plt.plot(y, x1, '+', color='red', ms=5)
+        plt.plot(y, x2, '--', color='blue', ms=5)
+        plt.show()
+                    
+#            U_final = np.abs(np.trace(self.U))
         return self.U
             
     def plotter(self, U, method):
